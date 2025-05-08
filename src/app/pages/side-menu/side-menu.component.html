@@ -1,5 +1,13 @@
-<div class="flex items-center w-full bg-gray-100">
-    <div class="flex w-full h-screen max-w-xs p-4 bg-white">
+<div class="relative flex items-center w-full bg-gray-100">
+    <!-- Botón de menú mobile -->
+    <button (click)="toggleMenu()" class="absolute p-2 top-4 right-4 md:hidden">
+        <svg class="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+            <path d="M4 6h16M4 12h16M4 18h16"></path>
+        </svg>
+    </button>
+
+    <!-- Menú lateral -->
+    <div [class.hidden]="!isMenuVisible" class="hidden w-full h-screen max-w-xs p-4 bg-white md:block">
         <ul class="flex flex-col w-full">
             <li class="my-px">
                 <span class="flex px-4 my-4 text-sm font-medium text-gray-400 uppercase">Innovatube</span>
