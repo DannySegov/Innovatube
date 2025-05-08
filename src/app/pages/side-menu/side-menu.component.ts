@@ -8,5 +8,9 @@ import { Component } from '@angular/core';
   styles: ``
 })
 export class SideMenuComponent {
+  isMenuVisible: boolean = false;
 
+  toggleMenu(): void {
+    this.isMenuVisible = !this.isMenuVisible;
+  }
 }
