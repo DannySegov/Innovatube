@@ -5,13 +5,9 @@ import { RegisterPageComponent } from "./pages/register-page/register-page.compo
 
 export const authRoutes: Routes = [
     {
-        path: '',
+        path: 'auth',
         component: AuthLayoutComponent,
         children: [
-            {
-                path: '',
-                component: LoginPageComponent
-            },
             {
                 path: 'login',
                 component: LoginPageComponent
@@ -19,11 +15,10 @@ export const authRoutes: Routes = [
             {
                 path: 'register',
                 component: RegisterPageComponent,
-                outlet: 'register'
             },
             {
                 path: '**',
-                redirectTo: 'login'
+                redirectTo: 'home'
             }
         ]
     }
