@@ -4,6 +4,7 @@ import { AuthLayoutComponent } from './auth/layout/auth-layout/auth-layout.compo
 import { RegisterPageComponent } from './auth/pages/register-page/register-page.component';
 import { SideMenuComponent } from './pages/side-menu/side-menu.component';
 import { HomeComponent } from './pages/home/home/home.component';
+import { FavoritesComponent } from './pages/favorites/favorites.component';
 
 export const routes: Routes = [
     {
@@ -18,6 +19,10 @@ export const routes: Routes = [
     {
         path: 'menu',
         component: SideMenuComponent,
+    },
+    {
+        path: 'favorites',
+        component: FavoritesComponent
     },
     {
         path: 'auth',
