@@ -1,1 +1,47 @@
-<app-side-menu></app-side-menu>
+<div class="flex">
+    <div class="w-full max-w-xs">
+        <app-side-menu (viewSelected)="updateSelectedView($event)"></app-side-menu>
+    </div>
+
+    <!-- Contenedor del buscador -->
+    <div class="flex flex-1 px-4 py-8 w-full bg-gray-100">
+        <div class="flex flex-col w-full">
+            <h1 class="mb-4 text-2xl font-bold dark:text-black">{{ selectedView === 'videos' ? 'Buscar videos en Youtube' : 'Mis Videos Favoritos' }}</h1>
+            
+            @if (selectedView === 'videos') {
+                <div class="flex items-center px-2 py-2 bg-white text-gray-400 group hover:ring-1 hover:ring-gray-300 focus-within:!ring-2 ring-inset focus-within:!ring-customRed rounded-md">
+                    <svg class="mr-2 w-5 h-5 stroke-slate-400" fill="none" viewBox="0 0 24 24" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                    </svg>
+                    <input
+                        class="block w-full text-base text-gray-700 bg-white appearance-none placeholder:text-gray-400 focus:outline-none sm:text-sm sm:leading-6"
+                        placeholder="Escribe el titulo del video o palabras clave"
+                        aria-label="Search components"
+                        id="headlessui-combobox-input-:r5n:"
+                        role="combobox"
+                        type="text"
+                        aria-expanded="false"
+                        aria-autocomplete="list"
+                        value=""
+                        style="caret-color: rgb(107, 114, 128)"
+                        (keyup.enter)="onSearch(txtSearch.value)"
+                        #txtSearch
+                    />
+                </div>
+            }
+
+            @if (selectedView === 'videos') {
+                <div class="max-w-screen">
+                    <app-section-video [searchQuery]="searchQuery"></app-section-video>
+                </div>
+            }
+            
+            @if (selectedView === 'favorites') {
+                <div class="max-w-screen">
+                    <app-favorites></app-favorites>
+                </div>
+            }
+        
+        </div>
+    </div>
+</div>

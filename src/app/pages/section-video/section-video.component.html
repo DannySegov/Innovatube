@@ -1,0 +1,51 @@
+<div *ngIf="allVideos.length > 0" class="py-5">
+    <div class="px-6 mx-auto max-w-7xl lg:px-8">
+        <div class="mx-auto max-w-2xl lg:mx-0">
+        </div>
+        <div class="grid grid-cols-1 gap-x-8 gap-y-20 mx-auto mt-16 max-w-2xl lg:mx-0 lg:max-w-none lg:grid-cols-3">
+            <article *ngFor="let video of currentPageVideos" class="flex flex-col justify-between items-start">
+                <div class="relative w-full group">
+                    <img [src]="video.thumbnails.high.url" alt="Video Thumbnail"
+                        class="aspect-[16/9] w-full rounded-2xl bg-gray-100 object-cover sm:aspect-[2/1] lg:aspect-[3/2]">
+                    <button *ngIf="!deleteMode" class="absolute top-2 right-2 p-1 text-white rounded-full transition-all duration-200 ease-in-out bg-black/30 hover:bg-black/50">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
+                        </svg>
+                    </button>
+                    <button *ngIf="deleteMode" (click)="deleteVideo.emit(video)" class="absolute top-2 right-2 p-1 text-white rounded-full transition-all duration-200 ease-in-out bg-black/30 hover:bg-black/50">
+                        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z"/></svg>
+                    </button>
+                    <div class="absolute inset-0 rounded-2xl ring-1 ring-inset ring-gray-900/10"></div>
+                </div>
+                <div class="max-w-xl">
+                    <div class="relative group">
+                        <h3 class="mt-3 text-lg font-semibold leading-6 text-gray-900 group-hover:text-gray-600">
+                            <a [href]="'https://www.youtube.com/watch?v=' + video.videoId" target="_blank">
+                                {{ video.title }}
+                            </a>
+                        </h3>
+                        <p class="mt-5 text-sm leading-6 text-gray-600 line-clamp-3">{{ video.description }}</p>
+                    </div>
+                    <div class="flex relative gap-x-4 items-center mt-8">
+                        <img [src]="video.thumbnails.default.url" alt="Channel Thumbnail"
+                            class="w-10 h-10 bg-gray-100 rounded-full">
+                        <div class="flex items-center text-sm leading-6">
+                            <p class="mr-2 font-semibold text-gray-900">
+                                <a [href]="'https://www.youtube.com/channel/' + video.channelId"
+                                    target="_blank">
+                                    {{ video.channelTitle }}
+                                </a>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </article>
+        </div>
+        <app-pagination 
+            [currentPage]="currentPage" 
+            [pageSize]="pageSize" 
+            [totalItems]="totalVideos" 
+            (pageChange)="onPageChange($event)">
+        </app-pagination>
+    </div>
+</div>
