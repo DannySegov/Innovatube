@@ -13,6 +13,7 @@ export class VideoService {
     private resultVideos = signal<VideoResponse[]>([]);
     private pageTokens: { [key: number]: string } = {};
     private favoriteVideos: Video[] = [];
+    private apiUrl = 'http://localhost:5000'; // Backend API URL
 
     constructor() { 
         // Load favorites from localStorage on service initialization
@@ -27,20 +28,101 @@ export class VideoService {
     }
 
     addToFavorites(video: Video): void {
-        // Check if video is not already in favorites
-        if (!this.favoriteVideos.some(v => v.videoId === video.videoId)) {
-            this.favoriteVideos.push(video);
-            this.saveFavorites();
+        console.log(`Intentando agregar video a favoritos: ${video.title}`);
+        console.log('Detalles del video:', {
+            videoId: video.videoId,
+            title: video.title,
+            thumbnailUrl: video.thumbnails.medium.url,
+            channelTitle: video.channelTitle
+        });
+
+        // Send to backend
+        const token = localStorage.getItem('token');
+        console.log('Token de autenticación:', token ? 'Presente' : 'No encontrado');
+
+        if (!token) {
+            console.error('No se encontró token de autenticación');
+            return;
         }
+
+        const headers = { 
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+        };
+        
+        this.http.post(`${this.apiUrl}/favorites/add`, {
+            videoId: video.videoId,
+            title: video.title,
+            thumbnailUrl: video.thumbnails.medium.url,
+            channelTitle: video.channelTitle
+        }, { headers }).subscribe({
+            next: (response) => {
+                console.log(`Video agregado exitosamente a favoritos: ${video.title}`);
+                console.log('Respuesta del servidor:', response);
+                // Only add to local list if backend succeeds
+                if (!this.favoriteVideos.some(v => v.videoId === video.videoId)) {
+                    this.favoriteVideos.push(video);
+                    this.saveFavorites();
+                    console.log(`Video añadido a la lista local de favoritos: ${video.title}`);
+                } else {
+                    console.log(`El video ya estaba en favoritos: ${video.title}`);
+                }
+            },
+            error: (err) => {
+                console.error(`Error al agregar video a favoritos: ${video.title}`, err);
+                console.error('Detalles del error:', {
+                    videoId: video.videoId,
+                    title: video.title,
+                    errorStatus: err.status,
+                    errorMessage: err.message,
+                    errorBody: err.error
+                });
+
+                // Manejar errores específicos
+                if (err.status === 401) {
+                    console.error('Token de autenticación inválido o expirado');
+                    // Aquí podrías agregar lógica para redirigir al login
+                } else if (err.status === 400) {
+                    console.error('Error en los datos enviados');
+                } else if (err.status === 0) {
+                    console.error('No se pudo conectar con el servidor');
+                }
+            },
+            complete: () => {
+                console.log('Solicitud de agregar a favoritos completada');
+            }
+        });
     }
 
     removeFromFavorites(video: Video): void {
-        this.favoriteVideos = this.favoriteVideos.filter(v => v.videoId !== video.videoId);
-        this.saveFavorites();
+        // Send to backend
+        this.http.delete(`${this.apiUrl}/favorites/remove`, { 
+            body: { videoId: video.videoId } 
+        }).subscribe({
+            next: () => {
+                this.favoriteVideos = this.favoriteVideos.filter(v => v.videoId !== video.videoId);
+                this.saveFavorites();
+            },
+            error: (err) => {
+                console.error('Failed to remove from favorites', err);
+            }
+        });
     }
 
     private saveFavorites(): void {
         localStorage.setItem('favoriteVideos', JSON.stringify(this.favoriteVideos));
+    }
+
+    loadBackendFavorites(): void {
+        this.http.get<Video[]>(`${this.apiUrl}/favorites`).subscribe({
+            next: (favorites) => {
+                this.favoriteVideos = favorites;
+                this.saveFavorites();
+            },
+            error: (err) => {
+                console.error('Failed to load favorites', err);
+            }
+        });
     }
 
     searchVideos(query: string, pageNumber: number = 1) {
